@@ -68,7 +68,7 @@ func GenerateTypeSchemas() error {
 	}
 	reflector.AllowAdditionalProperties = true
 	// Specify struct to 'schema-fy'
-	schema := reflector.Reflect(&gogeo.Calendar{})
+	schema := reflector.Reflect(&gogeo.GeoParquet{})
 
 	if err := WriteSchema("./schemas/generated-schema.json", schema); err != nil {
 		return err
