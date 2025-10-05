@@ -1,0 +1,70 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "South Guard (Wache)" },
+      "geometry": { "type": "Point", "coordinates": [8.52238, 47.37222] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "SRZ Real Estate" },
+      "geometry": { "type": "Point", "coordinates": [8.52547, 47.37480] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Triemli Guard (Wache)" },
+      "geometry": { "type": "Point", "coordinates": [8.50457, 47.37583] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Fire Department" },
+      "geometry": { "type": "Point", "coordinates": [8.54070, 47.37170] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Center Guard (Wache)" },
+      "geometry": { "type": "Point", "coordinates": [8.54113, 47.38169] }    
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Civil Defense Museum" },
+      "geometry": { "type": "Point", "coordinates": [8.52674, 47.39178] }  
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Logistics center" },
+      "geometry": { "type": "Point", "coordinates": [8.56003, 47.42205] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Civil defense vehicle fleet" },
+      "geometry": { "type": "Point", "coordinates": [8.55284, 47.41487] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Militia Fire Brigade & Civil Defense (Airgate)" },
+      "geometry": { "type": "Point", "coordinates": [8.55258, 47.41488] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Blue Light Training Center BZB" },
+      "geometry": { "type": "Point", "coordinates": [8.56762, 47.42556] }  
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Hot Pot" },
+      "geometry": { "type": "Point", "coordinates": [8.56762, 47.42556] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Airport Guard (Wache)" },
+      "geometry": { "type": "Point", "coordinates": [8.55020, 47.46472] }   
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Operations Control Center" },
+      "geometry": { "type": "Point", "coordinates": [8.55283, 47.46379] }   
+    }
+  ]
+}

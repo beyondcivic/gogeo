@@ -86,19 +86,39 @@ func writeGeoParquet(path string, fc *geojson.FeatureCollection) error {
 		parquet.Compression(&parquet.Zstd),
 	}
 
-	writer := parquet.NewGenericWriter[parquet.Row](file, writerOpts...)
+	// Convert features to records
+	records := make([]GeoParquetRecord, 0, len(fc.Features))
+
+	for _, feature := range fc.Features {
+		record := GeoParquetRecord{}
+
+		// Add geometry as WKB
+		if feature.Geometry != nil {
+			wkbBytes, err := wkb.Marshal(feature.Geometry)
+			if err != nil {
+				return fmt.Errorf("failed to encode geometry as WKB: %w", err)
+			}
+			record.Geometry = wkbBytes
+		}
+
+		// Add the name property if it exists (for this simple example)
+		if feature.Properties != nil {
+			if name, exists := feature.Properties["name"]; exists && name != nil {
+				if nameStr, ok := name.(string); ok {
+					record.Name = &nameStr
+				}
+			}
+		}
+
+		records = append(records, record)
+	}
+
+	// Create writer and write records
+	writer := parquet.NewGenericWriter[GeoParquetRecord](file, writerOpts...)
 	defer writer.Close()
 
-	// Convert features to rows and write
-	for _, feature := range fc.Features {
-		row, err := featureToParquetRow(feature, propertyInfos)
-		if err != nil {
-			return fmt.Errorf("failed to convert feature: %w", err)
-		}
-
-		if _, err := writer.Write([]parquet.Row{row}); err != nil {
-			return fmt.Errorf("failed to write row: %w", err)
-		}
+	if _, err := writer.Write(records); err != nil {
+		return fmt.Errorf("failed to write records: %w", err)
 	}
 
 	return nil

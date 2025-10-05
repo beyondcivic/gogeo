@@ -1,5 +1,11 @@
 package gogeo
 
+// GeoParquetRecord represents a single record in a GeoParquet file
+type GeoParquetRecord struct {
+	Geometry []byte  `parquet:"name=geometry, type=BYTE_ARRAY, repetition=OPTIONAL"`
+	Name     *string `parquet:"name=name, type=BYTE_ARRAY, convertedtype=UTF8, repetition=OPTIONAL"`
+}
+
 type GeoParquet struct {
 	// GeoParquet version.
 	Version string `json:"version" parquet:"name=version, type=BYTE_ARRAY, convertedtype=UTF8, encoding=PLAIN_DICTIONARY"`

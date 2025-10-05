@@ -1,6 +1,6 @@
 # gogeo
 
-[![Version](https://img.shields.io/badge/version-v0.2.2-blue)](https://github.com/beyondcivic/gogeo/releases/tag/v0.2.2)
+[![Version](https://img.shields.io/badge/version-v0.2.3-blue)](https://github.com/beyondcivic/gogeo/releases/tag/v0.2.3)
 [![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?logo=go)](https://golang.org/doc/devel/release.html)
 [![Go Reference](https://pkg.go.dev/badge/github.com/beyondcivic/gogeo.svg)](https://pkg.go.dev/github.com/beyondcivic/gogeo)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
