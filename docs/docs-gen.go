@@ -68,7 +68,7 @@ func GenerateTypeSchemas() error {
 	}
 	reflector.AllowAdditionalProperties = true
 	// Specify struct to 'schema-fy'
-	schema := reflector.Reflect(&gogeo.GeoParquet{})
+	schema := reflector.Reflect(&gogeo.GeoParquetRecord{})
 
 	if err := WriteSchema("./schemas/generated-schema.json", schema); err != nil {
 		return err

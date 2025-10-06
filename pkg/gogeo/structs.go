@@ -2,7 +2,8 @@ package gogeo
 
 // GeoParquetRecord represents a single record in a GeoParquet file
 type GeoParquetRecord struct {
-	Geometry []byte  `parquet:"name=geometry, type=BYTE_ARRAY"`
+	// Geometry column MUST have repetition specified per GeoParquet spec
+	Geometry []byte  `parquet:"name=geometry, type=BYTE_ARRAY, repetition=REQUIRED"`
 	Name     *string `parquet:"name=name, type=BYTE_ARRAY, convertedtype=UTF8, repetition=OPTIONAL"`
 }
 
