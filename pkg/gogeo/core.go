@@ -176,99 +176,6 @@ func analyzeProperties(fc *geojson.FeatureCollection) []PropertyInfo {
 	return infos
 }
 
-// featureToParquetRow converts a GeoJSON feature to a Parquet row
-func featureToParquetRow(feature *geojson.Feature, propertyInfos []PropertyInfo) (parquet.Row, error) {
-	// Create value slice: geometry + properties
-	values := make([]parquet.Value, len(propertyInfos)+1)
-
-	// Convert geometry to WKB
-	if feature.Geometry != nil {
-		wkbBytes, err := wkb.Marshal(feature.Geometry)
-		if err != nil {
-			return nil, fmt.Errorf("failed to encode geometry as WKB: %w", err)
-		}
-		values[0] = parquet.ByteArrayValue(wkbBytes)
-	} else {
-		values[0] = parquet.NullValue()
-	}
-
-	// Add property values
-	for i, info := range propertyInfos {
-		var value parquet.Value
-
-		if feature.Properties == nil {
-			value = parquet.NullValue()
-		} else if propValue, exists := feature.Properties[info.Name]; exists && propValue != nil {
-			value = convertToParquetValue(propValue, info.Type)
-		} else {
-			value = parquet.NullValue()
-		}
-
-		values[i+1] = value
-	}
-
-	return values, nil
-}
-
-// convertToParquetValue converts a property value to a Parquet value
-func convertToParquetValue(value any, expectedType PropertyType) parquet.Value {
-	if value == nil {
-		return parquet.NullValue()
-	}
-
-	switch expectedType {
-	case PropertyTypeInt:
-		switch v := value.(type) {
-		case int:
-			return parquet.Int64Value(int64(v))
-		case int32:
-			return parquet.Int64Value(int64(v))
-		case int64:
-			return parquet.Int64Value(v)
-		case float64:
-			return parquet.Int64Value(int64(v))
-		default:
-			return parquet.NullValue()
-		}
-
-	case PropertyTypeFloat:
-		switch v := value.(type) {
-		case float32:
-			return parquet.DoubleValue(float64(v))
-		case float64:
-			return parquet.DoubleValue(v)
-		case int:
-			return parquet.DoubleValue(float64(v))
-		case int64:
-			return parquet.DoubleValue(float64(v))
-		default:
-			return parquet.NullValue()
-		}
-
-	case PropertyTypeBool:
-		if v, ok := value.(bool); ok {
-			return parquet.BooleanValue(v)
-		}
-		return parquet.NullValue()
-
-	case PropertyTypeString:
-		switch v := value.(type) {
-		case string:
-			return parquet.ByteArrayValue([]byte(v))
-		case []any, map[string]any:
-			// Convert complex types to JSON strings
-			data, _ := json.Marshal(v)
-			return parquet.ByteArrayValue(data)
-		default:
-			return parquet.ByteArrayValue([]byte(fmt.Sprintf("%v", v)))
-		}
-
-	default:
-		// Fallback to string representation
-		return parquet.ByteArrayValue([]byte(fmt.Sprintf("%v", value)))
-	}
-}
-
 // createGeoParquetMetadata creates GeoParquet metadata from a feature collection
 func createGeoParquetMetadata(fc *geojson.FeatureCollection, propertyInfos []PropertyInfo) *GeoParquet {
 	// Collect geometry types and bounds
@@ -297,20 +204,17 @@ func createGeoParquetMetadata(fc *geojson.FeatureCollection, propertyInfos []Pro
 	}
 	sort.Strings(typesList)
 
-	// Determine geometry type string
-	geomTypeStr := "Unknown"
-	if len(typesList) == 1 {
-		geomTypeStr = typesList[0]
-	} else if len(typesList) > 1 {
-		geomTypeStr = "Mixed"
+	// Create geometry column metadata
+	// For EPSG:4326 (WGS84), we can set CRS to null as it's the default
+	geomColumn := GeoParquetColumn{
+		Encoding:      DefaultGeometryEncoding,
+		GeometryTypes: typesList,
+		CRS:           nil, // null for WGS84/EPSG:4326
 	}
 
-	// Create geometry column metadata
-	geomColumn := GeoParquetColumn{
-		Name:         DefaultGeometryColumn,
-		GeometryType: geomTypeStr,
-		CRS:          DefaultCRS,
-	}
+	// Create columns map
+	columns := make(map[string]GeoParquetColumn)
+	columns[DefaultGeometryColumn] = geomColumn
 
 	// Create property metadata
 	properties := make([]GeoParquetProperty, len(propertyInfos))
@@ -326,8 +230,7 @@ func createGeoParquetMetadata(fc *geojson.FeatureCollection, propertyInfos []Pro
 	metadata := &GeoParquet{
 		Version:       GeoParquetVersion,
 		PrimaryColumn: DefaultGeometryColumn,
-		Columns:       []GeoParquetColumn{geomColumn},
-		Properties:    properties,
+		Columns:       columns,
 	}
 
 	return metadata
