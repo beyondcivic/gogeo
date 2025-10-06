@@ -1,16 +1,16 @@
 // Package cmd provides the command-line interface for gogeo.
 //
-// gogeo is a Go implementation for working with iCalendar format (RFC 5545).
+// gogeo is a Go implementation for converting GeoJSON to GeoParquet format.
 //
 // The command-line tool provides functionality to:
-//   - Generate GeoParquet from iCal files with automatic type inference
+//   - Generate GeoParquet from GeoJSON files with WKB geometry encoding
 //   - Display version and build information
 //
 // # Command Reference
 //
-// Generate json with default output path:
+// Generate parquet with default output path:
 //
-//	gogeo generate caledar.ics
+//	gogeo generate data.geojson
 //
 // Show version information:
 //
@@ -19,7 +19,7 @@
 // # Features
 //
 // Metadata Generation:
-//   - Automatic data type inference from GeoJsonfile
+//   - WKB geometry encoding for all supported geometry types
 //   - Configurable output paths and validation options
 //   - Support for environment variable configuration
 package cmd
@@ -94,5 +94,5 @@ func determineOutputPath(providedPath, csvPath string) string {
 
 	// Generate default path based on CSV filename
 	baseName := strings.TrimSuffix(filepath.Base(csvPath), filepath.Ext(csvPath))
-	return baseName + "_parsed.geoparquet"
+	return baseName + ".parquet"
 }
